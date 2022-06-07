@@ -8,6 +8,9 @@ from .geoService import (YaGeoService,
                         InvalidKey
 )
 
+import logging
+LOG = logging.getLogger(__name__)
+
 geo = YaGeoService(Config.YANDEX_API_KEY)
 
 @bp.route('/')
@@ -16,9 +19,13 @@ def get_distance():
         try:
             points = geo.coordinates(request.args["address"])
         except (UnexpectedResponse, NothingFound):
-            return jsonify({"Not correct request": points})
+            LOG.warning('Not correct request:')
+            return jsonify({'error': "Not correct request"})
         except InvalidKey:
-            return jsonify({"Server error": points})
+            LOG.critical('Server error')
+            return jsonify({'error': "Server error"})
+        LOG.info('Get coordinate for ' + request.args["address"])
+
         return jsonify({
             "distance": points,
             "address": request.args["address"]
