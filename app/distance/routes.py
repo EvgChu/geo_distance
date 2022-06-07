@@ -7,11 +7,13 @@ from .geoService import (YaGeoService,
                         NothingFound,
                         InvalidKey
 )
-
+from .distance import DistanceFromMKAD
 import logging
-LOG = logging.getLogger(__name__)
 
+
+LOG = logging.getLogger(__name__)
 geo = YaGeoService(Config.YANDEX_API_KEY)
+metr = DistanceFromMKAD()
 
 @bp.route('/')
 def get_distance():
@@ -25,9 +27,9 @@ def get_distance():
             LOG.critical('Server error')
             return jsonify({'error': "Server error"}), 500
         LOG.info('Get coordinate for ' + request.args["address"])
-
+        distance_km = metr.distance(points)
         return jsonify({
-            "distance": points,
+            "distance": distance_km,
             "address": request.args["address"]
             })
     LOG.warning('Empty request')
