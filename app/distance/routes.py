@@ -20,14 +20,15 @@ def get_distance():
             points = geo.coordinates(request.args["address"])
         except (UnexpectedResponse, NothingFound):
             LOG.warning('Not correct request:')
-            return jsonify({'error': "Not correct request"})
+            return jsonify({'error': "Not correct request"}), 400
         except InvalidKey:
             LOG.critical('Server error')
-            return jsonify({'error': "Server error"})
+            return jsonify({'error': "Server error"}), 500
         LOG.info('Get coordinate for ' + request.args["address"])
 
         return jsonify({
             "distance": points,
             "address": request.args["address"]
             })
-    return "Ok blueprint"
+    LOG.warning('Empty request')
+    return jsonify({'error': "Empty request"})
