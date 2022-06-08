@@ -14,7 +14,7 @@ def test_in_mkad():
     assert data['distance'] == 0
 
 
-def test_close_mkad():        
+def test_close_out_mkad():        
     data = {'address': "Реутовская улица, 6"
                 "Балашиха, Московская область"}
     response = app.test_client().get(
@@ -26,6 +26,20 @@ def test_close_mkad():
 
     assert response.status_code == 200
     assert 0.4 <= data['distance'] <= 0.9
+
+
+
+def test_close_in_mkad():        
+    data = {'address': "улица Маршала Прошлякова, 26к3с1 Москва"}
+    response = app.test_client().get(
+        '/',
+        query_string = data
+    )
+
+    data = json.loads(response.get_data(as_text=True))
+
+    assert response.status_code == 200
+    assert data['distance'] == 0
 
 
 def test_out_mkad():        

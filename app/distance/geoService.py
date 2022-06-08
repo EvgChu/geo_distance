@@ -1,6 +1,6 @@
 from decimal import Decimal
 from typing import Tuple
-
+from .coordinates import Coordinates
 import requests
 
 class ServiceGeocoderException(Exception):
@@ -67,7 +67,7 @@ class YaGeoService(GeoService):
         coordinates = data[0]["GeoObject"]["Point"]["pos"]  # type: str
         longitude, latitude = tuple(coordinates.split(" "))
 
-        return Decimal(latitude), Decimal(longitude)
+        return Coordinates(Decimal(latitude), Decimal(longitude))
 
     def address(self, longitude: Decimal, latitude: Decimal) -> str:
         """Fetch address for passed coordinates."""

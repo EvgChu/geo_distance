@@ -3,6 +3,9 @@ import geojson
 from geopy.distance import geodesic
 from typing import Tuple
 from decimal import Decimal
+from shapely.geometry import Point, Polygon
+from shapely.ops import nearest_points
+from .coordinates import Coordinates
 
 class DistanceFromObjects:
     """
@@ -21,12 +24,16 @@ class DistanceFromMKAD(DistanceFromObjects):
     def __init__(self):
         with open(DistanceFromMKAD.FILE_GEOJSON_MKAD) as f:
             data = geojson.loads(f.read())
-            self.mkad = data["coordinates"][0]
+            self.mkad = Polygon(data["coordinates"][0])
 
-    def distance(self, target: Tuple[Decimal]) -> float:
-        """ Простое вычисления расстояния """
-        all_distance = []
-        for point in self.mkad:
-            all_distance.append(geodesic(point, target).kilometers)
+    def distance(self, target: Coordinates) -> float:
+        """ Представляем МКАД в виде полигона и используя библиотеку shapely
+        находи ближашую точку полигона (не вершину) к заданной 
+        """
+        if self.mkad.contains(Point(target.latitude, target.longitude)):
+            return 0
+        point = Point(target)
+        p1, p2 = nearest_points(self.mkad, point)
         
-        return round(min(all_distance), 3)
+        return geodesic(target, (p1.x, p1.y)).kilometers
+
