@@ -3,7 +3,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 try:
     from local_config import LocalConfig
 except:
-    pass
+    class LocalConfig:
+        YANDEX_API_KEY = ''
 
 class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
