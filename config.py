@@ -11,4 +11,6 @@ class Config(object):
     SECRET_KEY = LocalConfig.SECRET_KEY
     YANDEX_API_KEY = LocalConfig.YANDEX_API_KEY
     LOG_FILE_NAME = ".log"
+    REDIS_HOST = 'cache'
+    REDIS_PORT = '6379'
     
